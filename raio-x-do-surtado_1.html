@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Raio-X do Surtado</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;800;900&display=swap">
+<style>
+/* Layout: app de uma coluna (tráfego vem do Instagram, mobile-first). Intro → bio → 10 incidências → 3 perguntas abertas → laudo de surto + receita Anti-Surto.
+   Visual único na identidade SURTAVET: off-white + preto, azul da marca como cor principal, as 5 cores da paleta como níveis de surto. Motivo: a cápsula da paleta vira o surtômetro. */
+:root{
+  --off:#F7F2ED;
+  --ink:#000000;
+  --card:#FFFFFF;
+  --muted:#5E5751;
+  --line:#E2D9D0;
+  --blue:#009EFF;  --blue-l:#ADE0FF;
+  --green:#70DE2E; --green-l:#B9E3A0;
+  --lilac:#C988FD; --lilac-l:#DEB5FF;
+  --orange:#F86A36;--orange-l:#FFB1A3;
+  --f:"Outfit","Nexa","Avenir Next","Segoe UI",system-ui,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+body{background:var(--off);color:var(--ink);font-family:var(--f);font-size:16px;line-height:1.5;font-weight:400;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:24px 56px}
+.app{max-width:540px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+h1,h2,h3{margin:0;text-wrap:balance}
+p{margin:0}
+
+/* marca */
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.logo{font-weight:900;font-size:1.45rem;letter-spacing:-.04em;line-height:1;color:var(--blue)}
+.logo span{font-weight:300;color:var(--ink);letter-spacing:-.02em}
+.logo small{display:block;font-size:.55rem;font-weight:400;letter-spacing:.14em;color:var(--ink);margin-top:3px}
+.chip{font-size:.75rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;border:1.5px solid var(--ink);border-radius:999px;padding:5px 12px;white-space:nowrap}
+
+/* intro */
+h1{font-weight:900;font-size:clamp(2.55rem,11.5vw,3.7rem);line-height:.9;letter-spacing:-.045em}
+h1 .s{color:var(--blue)}
+.lede{font-size:1.1rem;font-weight:300;max-width:42ch}
+.lede b{font-weight:700}
+.legend{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.legend div{border-radius:999px;padding:16px 4px 12px;text-align:center;font-size:.7rem;font-weight:700;line-height:1.1;display:flex;flex-direction:column;gap:2px}
+.legend div i{font-style:normal;font-weight:300;font-size:.62rem}
+.lv0{background:var(--green)} .lv1{background:var(--blue)} .lv2{background:var(--lilac)} .lv3{background:var(--orange)} .lv4{background:var(--ink);color:var(--off)}
+
+.field{display:flex;flex-direction:column;gap:8px}
+.intro-form{display:flex;flex-direction:column;gap:16px}
+.at input#nome{padding-left:0}
+.field label{font-weight:700;font-size:1.05rem}
+.at{display:flex;align-items:center;background:var(--card);border:2px solid var(--ink);border-radius:999px;padding-inline:18px}
+.at:focus-within{border-color:var(--blue);box-shadow:0 0 0 4px var(--blue-l)}
+.at span{font-weight:700;font-size:1.1rem}
+.at input{flex:1;min-width:0;border:0;background:transparent;font:500 1.1rem var(--f);padding:14px 6px;outline:none;color:var(--ink)}
+textarea{width:100%;background:var(--card);border:2px solid var(--ink);border-radius:18px;padding:14px 16px;font:400 1rem/1.45 var(--f);color:var(--ink);resize:vertical;min-height:120px}
+textarea[aria-invalid="true"]{border-color:#B23A0E}
+textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 4px var(--blue-l)}
+.hint{font-size:.88rem;color:var(--muted)}
+.err{font-size:.9rem;font-weight:500;color:#B23A0E}
+.btn{appearance:none;border:2px solid var(--ink);background:var(--blue);color:var(--ink);border-radius:999px;padding:16px 22px;font:800 1.08rem var(--f);cursor:pointer;width:100%;text-align:center;text-decoration:none;display:block;transition:transform .12s, box-shadow .12s;box-shadow:0 4px 0 var(--ink)}
+.btn:hover{transform:translateY(-1px);box-shadow:0 5px 0 var(--ink)}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
+.ghost{appearance:none;background:transparent;border:1.5px solid var(--ink);color:var(--ink);border-radius:999px;padding:12px 18px;font:500 .95rem var(--f);cursor:pointer;width:100%}
+.ghost:hover{background:var(--card)}
+.link{appearance:none;background:none;border:0;padding:4px 0;font:500 .95rem var(--f);color:var(--muted);text-decoration:underline;cursor:pointer;align-self:center}
+.btn:focus-visible,.ghost:focus-visible,.opt:focus-visible,.link:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+.fine{font-size:.82rem;color:var(--muted);text-align:center}
+
+/* quiz */
+.progress{display:flex;flex-direction:column;gap:8px}
+.prow{display:flex;justify-content:space-between;font-size:.78rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase}
+.prow span:last-child{color:var(--muted)}
+.bar{height:12px;border:2px solid var(--ink);border-radius:999px;background:var(--card);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--blue);border-right:2px solid var(--ink);transition:width .3s ease}
+.q{font-weight:800;font-size:clamp(1.5rem,6.5vw,2rem);line-height:1.05;letter-spacing:-.025em}
+.qsub{font-weight:300;color:var(--muted);margin-top:-10px}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{appearance:none;text-align:left;background:var(--card);border:2px solid var(--ink);color:var(--ink);border-radius:22px;padding:14px 18px;font:500 1rem/1.35 var(--f);cursor:pointer;display:grid;grid-template-columns:30px 1fr;gap:10px;align-items:center;transition:background .12s}
+.opt:hover{background:#EEF8FF}
+.opt .k{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--ink);display:grid;place-items:center;font-weight:700;font-size:.85rem}
+.opt[aria-pressed="true"]{background:var(--blue-l)}
+.opt[aria-pressed="true"] .k{background:var(--ink);color:var(--off)}
+.nav{display:flex;gap:10px}
+.nav .ghost{width:auto}
+.open-q{display:flex;flex-direction:column;gap:18px}
+.open-q textarea{min-height:88px}
+
+/* laudo */
+.laudo{background:var(--card);border:2px solid var(--ink);border-radius:28px;overflow:hidden}
+.lhead{display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px 14px;padding:14px 20px;border-bottom:2px solid var(--ink);font-size:.75rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase}
+.lhead b{font-weight:800}
+.hero{padding:22px 20px 24px;display:flex;flex-direction:column;gap:14px}
+.who{font-weight:500;font-size:.95rem;overflow-wrap:anywhere}
+.capsule{position:relative;height:96px;border:2.5px solid var(--ink);border-radius:999px;background:var(--off);overflow:hidden}
+.capsule .fill{position:absolute;inset:0 auto 0 0;border-right:2.5px solid var(--ink);transition:width 1.2s cubic-bezier(.2,.8,.2,1)}
+.capsule .val{position:absolute;inset:0;display:flex;align-items:center;justify-content:space-between;padding-inline:24px;gap:10px}
+.capsule .pct{font-weight:900;font-size:3.4rem;letter-spacing:-.05em;line-height:1;font-variant-numeric:tabular-nums}
+.capsule .unit{font-weight:700;font-size:.95rem;text-align:right;line-height:1.1}
+.scale{display:flex;justify-content:space-between;font-size:.72rem;color:var(--muted);font-weight:500;margin-top:-6px}
+.level{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.pill{border-radius:999px;padding:6px 14px;font-weight:800;font-size:.95rem;border:2px solid var(--ink)}
+.tier{font-weight:500;font-size:.85rem;color:var(--muted)}
+.hero h2{font-weight:800;font-size:clamp(1.45rem,6vw,1.85rem);line-height:1.05;letter-spacing:-.025em}
+.sect{padding:20px;border-top:2px solid var(--ink);display:flex;flex-direction:column;gap:12px}
+.eyebrow{font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+.biobox{background:var(--off);border-radius:16px;padding:12px 14px;font-size:.92rem;white-space:pre-wrap;overflow-wrap:anywhere;color:var(--muted)}
+.checks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.checks li{display:grid;grid-template-columns:26px 1fr;gap:8px;align-items:start;font-size:.95rem}
+.checks .ic{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:.75rem;font-weight:900;border:1.5px solid var(--ink);margin-top:1px}
+.checks .ok .ic{background:var(--green)}
+.checks .no .ic{background:var(--orange)}
+.meters{display:grid;grid-template-columns:1fr auto;gap:9px 14px;align-items:center;font-size:.93rem}
+.meters .m{display:flex;gap:4px}
+.meters .m i{width:24px;height:10px;border-radius:999px;border:1.5px solid var(--ink);background:var(--card)}
+.meters .m i.on{background:var(--ink)}
+.meters .bad{font-weight:700}
+.meters .m.bad i.on{background:var(--orange)}
+.finds{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+.finds li{background:var(--off);border-radius:20px;padding:14px 16px;display:flex;flex-direction:column;gap:6px}
+.finds h3{font-weight:800;font-size:1.05rem;letter-spacing:-.01em}
+.rx{font-size:.93rem}
+.rx b{font-weight:800;color:var(--blue)}
+
+/* receita */
+.offer{background:var(--ink);color:var(--off);border-radius:28px;padding:24px 20px;display:flex;flex-direction:column;gap:14px}
+.offer .eyebrow{color:var(--blue-l)}
+.offer h2{font-weight:900;font-size:clamp(2rem,9vw,2.6rem);line-height:.92;letter-spacing:-.04em}
+.offer h2 span{color:var(--blue)}
+.pain{font-size:1.08rem;font-weight:500}
+.quote{border-left:4px solid var(--blue);padding:4px 0 4px 14px;font-weight:300;font-size:1rem}
+.quote b{font-weight:700}
+.offer ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.offer li{display:grid;grid-template-columns:22px 1fr;gap:8px;font-weight:300}
+.offer li::before{content:"";width:14px;height:22px;border-radius:999px;background:linear-gradient(var(--blue) 50%,var(--blue-l) 50%);margin-top:2px}
+.offer li b{font-weight:700}
+.offer .btn{border-color:var(--off);box-shadow:0 4px 0 var(--blue-l)}
+.offer .fine{color:#B9B1AA}
+.offer .fine b{color:var(--off);font-weight:700;user-select:all}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.row>*{flex:1 1 200px}
+.ex{display:flex;flex-direction:column;gap:8px;border-top:1.5px dashed var(--line);padding-top:10px;margin-top:2px;font-size:.9rem}
+.ex p{display:flex;flex-direction:column;gap:3px;align-items:flex-start}
+.tag{font-size:.68rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;border-radius:999px;padding:2px 9px;border:1.5px solid var(--ink)}
+.tag.bad{background:var(--orange-l)} .tag.good{background:var(--green-l)}
+.scale-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.scale-list li{display:grid;grid-template-columns:18px 1fr;gap:10px;align-items:start;font-size:.92rem;color:var(--muted);border-radius:16px;padding:8px 10px}
+.scale-list li b{display:block;color:var(--ink);font-weight:700}
+.scale-list li.me{background:var(--off);color:var(--ink);outline:2px solid var(--ink)}
+.scale-list .dot{width:14px;height:24px;border-radius:999px;border:1.5px solid var(--ink);margin-top:2px}
+.incl{font-weight:800;font-size:1.05rem;color:var(--blue)}
+.price{display:flex;flex-direction:column;gap:2px;border-top:2px dashed #3a3530;padding-top:14px}
+.price-l{font-weight:300;font-size:1rem}
+.price-v{font-weight:900;font-size:clamp(2.4rem,11vw,3.2rem);letter-spacing:-.04em;line-height:1;color:var(--blue);font-variant-numeric:tabular-nums}
+.toast{min-height:1.3em;text-align:center;font-size:.9rem;font-weight:500}
+
+@media (prefers-reduced-motion:reduce){.capsule .fill,.bar i,.btn{transition:none}}
+</style>
+
+<main class="app" id="app" aria-live="polite"></main>
+
+<script>
+/* ===== CONFIG ===== */
+const WHATS = "5531975595374";
+const WHATS_SHOW = "(31) 97559-5374";
+const INSTA = "surtavet";
+
+/* ===== NÍVEIS (por % de surto) ===== */
+const LEVELS = [
+  {max:19, name:"Zero surto", ex:"Bio clara, link direto pro WhatsApp e tutor chegando dizendo \"te vi no Instagram\".", tier:"S", cls:"lv0", color:"var(--green)",
+   title:"Zero surto. Ou você é muito boa, ou respondeu com otimismo.",
+   text:"Pelas suas respostas, o perfil já se apresenta bem, tem voz e traz paciente. O risco agora é crescer sem direção e perder o que funciona. Perfil bom sem estratégia vira perfil bom parado.",
+   pain:"Perfil que funciona sem direção para de funcionar e você só percebe quando a agenda esfria."},
+  {max:39, name:"Surto leve", ex:"Perfil com rosto e voz, mas os posts não apontam para nenhum serviço.", tier:"A", cls:"lv1", color:"var(--blue)",
+   title:"Surto leve. Falta só o perfil virar agenda.",
+   text:"A base está boa: tem rosto, tem voz, a bio ajuda. O que falta é direcionamento, cada post apontando para o serviço certo, com o próximo passo certo. É a diferença entre ser admirada e ser contratada.",
+   pain:"Você já tem atenção. Cada semana sem direção é atenção que vira curtida, não consulta."},
+  {max:59, name:"Surto moderado", ex:"Feed organizado, mas cheio de dica genérica que qualquer vet postaria.", tier:"B", cls:"lv2", color:"var(--lilac)",
+   title:"Surto moderado. Perfil arrumadinho, mas ainda não vende.",
+   text:"Você faz o básico, e esse é o problema: o básico é o que todo mundo faz. O perfil está bonito, mas não dá ao tutor um motivo claro para escolher você e não o próximo vet da busca.",
+   pain:"Enquanto o seu perfil é só bonito, o tutor escolhe quem parece mais especialista. Às vezes nem é melhor que você, só se mostra melhor."},
+  {max:79, name:"Surto agudo", ex:"Posta toda semana, mas a bio não tem link, o fixado é de 2021 e ninguém agenda.", tier:"C", cls:"lv3", color:"var(--orange)",
+   title:"Surto agudo. Você posta, se cansa e ninguém agenda.",
+   text:"Existe esforço, mas o perfil não trabalha por você. Bio, fixados e conteúdo não conversam entre si, e quem chega não entende em 3 segundos quem você é e por que deveria agendar. Não é o algoritmo. É falta de direção.",
+   pain:"Você já está gastando tempo com o Instagram. O problema é que esse tempo hoje não volta em forma de paciente."},
+  {max:100, name:"Surto crônico", ex:"Logo na foto, \"apaixonada por animais\" na bio e feed só de data comemorativa.", tier:"D", cls:"lv4", color:"var(--ink)",
+   title:"Surto crônico. Seu perfil está surtado faz tempo.",
+   text:"O perfil existe, mas não diz quem você é, quem você atende nem como agendar. Quem chega por indicação procura você, não entende nada e vai embora. A boa notícia: é o ponto de partida mais fácil de virar, porque qualquer direção já muda tudo.",
+   pain:"Hoje o seu Instagram afasta paciente que já vinha indicado. Cada dia assim é consulta indo para outro vet."}
+];
+
+/* ===== PERGUNTAS DE MÚLTIPLA ESCOLHA ===== */
+const Q = [
+  {area:"Foto de perfil", q:"O que está na sua foto de perfil?",
+   o:[["A logo da minha marca",0],["Um pet (meu ou de paciente)",0],["Eu, mas numa foto muito antiga",1],["Eu, rosto nítido e fundo limpo",3]],
+   ex:["A logo da clínica ou aquela foto de 2019 com filtro","Você de jaleco, rosto ocupando a bolinha, fundo limpo"],
+   achado:"Para quem rola o feed, sua foto é uma bolinha de 40 pixels. Logo e pet não criam confiança. Rosto cria.",
+   rx:"Rosto ocupando a bolinha, fundo limpo. Pode ser de jaleco."},
+  {area:"Nome do perfil", ex:["Ana","Ana Souza | Vet de gatos BH"], q:"O que está escrito no campo Nome (aquele em negrito, acima da bio)?",
+   o:[["Só o meu nome",0],["\"Dra.\" + meu nome",1],["Meu nome + especialidade",2],["Nome + o que faço + cidade (ex.: Ana | Vet de gatos BH)",3]],
+   achado:"O campo Nome entra na busca do Instagram. Quem procura \"vet de gatos BH\" não vai digitar o seu nome.",
+   rx:"Nome completo + serviço + cidade no campo Nome. O CFMV exige nome completo e CRMV na página principal."},
+  {area:"Link na bio", ex:["Nenhum link, ou uma página com 12 botões","Link direto pro WhatsApp com \"Oi, vim pelo Instagram e quero agendar\""], q:"Para onde vai o link da sua bio?",
+   o:[["Não tenho link",0],["Uma página com vários botões",1],["Para o meu site",2],["Direto para o WhatsApp",3]],
+   achado:"Cada clique entre o interesse e a agenda é um tutor que desiste no caminho.",
+   rx:"Um link, um destino: WhatsApp com mensagem pronta."},
+  {area:"Destaques", ex:["\"Pets 2022\", \"Natal\", \"Bom dia\"","Quem sou · Serviços · Casos · Como agendar"], q:"Como estão os seus destaques?",
+   o:[["Não tenho destaques",0],["Tenho, mas estão desatualizados",1],["Capinhas lindas, conteúdo aleatório",1],["Atualizados: quem sou, serviços, casos e como agendar",3]],
+   achado:"Destaque é a vitrine fixa do perfil. Quem chega pela primeira vez olha ali antes de decidir se agenda.",
+   rx:"Quatro destaques: quem sou, serviços, casos e como agendar."},
+  {area:"Posts fixados", ex:["\"Bem-vindos ao meu perfil!\" postado em 2021","Quem sou eu · O caso do Thor · Como funciona a consulta"], q:"Quais posts estão fixados no topo do seu feed?",
+   o:[["Nenhum",0],["Um post de boas-vindas de anos atrás",1],["Os que tiveram mais curtida",2],["Um que me apresenta, um que prova e um que vende",3]],
+   achado:"Os fixados são a primeira coisa que o visitante lê no feed. Se não apresentam nem vendem, o resto do perfil trabalha dobrado.",
+   rx:"Fixe um post que apresenta você, um que prova resultado e um que vende o serviço."},
+  {area:"Rosto no feed", ex:["9 artes de Canva seguidas, nenhuma com você","1 vídeo seu explicando um caso a cada 3 posts"], q:"Nos seus últimos 9 posts, quantos mostram você?",
+   o:[["Nenhum, é tudo arte e foto de pet",0],["1 ou 2",1],["3 a 5",2],["6 ou mais",3]],
+   achado:"Perfil sem rosto vira catálogo. O tutor escolhe uma pessoa, não uma logo.",
+   rx:"Pelo menos 1 a cada 3 posts com você aparecendo ou falando."},
+  {area:"Voz própria", ex:["\"5 dicas para cuidar do seu pet no verão\"","\"Eu não indico tosa total no verão, e explico por quê\""], q:"Se trocassem o seu nome pelo de outro vet nos seus posts, alguém perceberia?",
+   o:[["Ninguém perceberia",0],["Talvez meus clientes",1],["Sim, meu jeito de falar é reconhecível",2],["Sim, até a concorrência perceberia",3]],
+   achado:"Se dá para trocar o seu nome sem ninguém notar, o conteúdo não é seu. É de qualquer vet.",
+   rx:"Escreva como você fala no consultório, com sua opinião clínica e seus casos."},
+  {area:"Datas comemorativas", ex:["\"Feliz Dia do Gato 🐱\" e só","\"Dia do Gato: 3 sinais de dor que o seu gato esconde\""], q:"Como você posta em data comemorativa (Dia do Cão, Natal, Dia do Vet)?",
+   o:[["Arte com a data e pronto",0],["Arte com uma legenda fofa",1],["Não posto só porque é data",2],["Uso a data como gancho para um assunto clínico",3]],
+   achado:"Arte só com a data é o post mais ignorado do feed. Ninguém salva \"Feliz Dia do Gato\".",
+   rx:"Use a data como gancho para um assunto clínico ou pule a data."},
+  {area:"Stories", ex:["Bom dia com café + repost de meme","Bastidor da consulta + \"eu faria diferente\" + caixinha para agendar"], q:"O que aparece nos seus stories numa semana normal?",
+   o:[["Bom dia, meme e repost",0],["Posto quando lembro",1],["Bastidores da rotina",2],["Bastidor, opinião e chamada para agendar",3]],
+   achado:"O feed atrai, os stories vendem. Story de \"bom dia\" não vende nada.",
+   rx:"Bastidor + opinião + chamada, pelo menos três vezes por semana."},
+  {area:"Conversão", ex:["\"Acho que alguns vieram pelo Insta, não sei\"","Todo tutor novo ouve: \"como você me encontrou?\""], q:"No último mês, quantos tutores chegaram dizendo \"te vi no Instagram\"?",
+   o:[["Nenhum",0],["Não sei, nunca perguntei",0],["1 a 3",2],["Mais de 3",3]],
+   achado:"Se ninguém chega dizendo \"te vi no Instagram\", o perfil hoje é custo, não canal.",
+   rx:"Pergunte a todo tutor novo como te encontrou e anote."}
+];
+
+/* ===== ANÁLISE DA BIO ===== */
+const norm = s => s.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase();
+function analyzeBio(raw){
+  const b = norm(raw||"");
+  const empty = b.trim().length < 3;
+  const publico = /(gat|felin|cao|caes|cachorr|canin|silvestr|exotic|equin|domicili|em casa|derma|ortoped|fisio|reabilit|oncolog|cardio|odonto|comportament|nutri|cirurg|anestes|oftalm|neuro|endocrin|acupunt|filhote|idos|geriatr|aves|pet|tutor|clinica geral|especialista|pos.?grad|residen)/.test(b);
+  const resolve = /(ajudo|cuido|resolv|para tutores|pra tutores|para quem|pra quem|sem estresse|sem medo|sem sair de casa|transform|atendo|atendimento|tratamento|cuidado d)/.test(b);
+  const agenda = /(agend|whats|wpp|zap|marque|marcar|clique|chama|fale comigo|link|consulta|↓|⬇|👇|🔗)/.test(raw||"") || /(agend|whats|wpp|zap|marque|marcar|clique|chama|fale comigo|link|consulta)/.test(b);
+  const local = /(\bbh\b|belo horizonte|contagem|betim|nova lima|\bsp\b|sao paulo|\brj\b|rio de janeiro|curitiba|brasilia|salvador|recife|fortaleza|porto alegre|goiania|campinas|zona |bairro|regiao|cidade|[a-z]{3,}\s?[\/-]\s?(mg|sp|rj|pr|sc|rs|go|df|ba|pe|ce|es|mt|ms|pa|am)\b)/.test(b.replace(/crmv\s?[\/-]?\s?[a-z]{2}/g,"")) || (raw||"").includes("\ud83d\udccd");
+  const crmv = /crmv/.test(b);
+  const cliche = /(apaixonad|amo (os |meus )?(animais|bichos|pets|bichinhos)|amor (pelos|aos|por) (animais|bichos|pets)|amante d|amor de 4 patas|paixao (pelos|por) animais|amo o que faco)/.test(b);
+  const emojis = (raw||"").match(/\p{Extended_Pictographic}/gu) || [];
+  let score = (publico?1:0) + (resolve?1:0) + (agenda?1:0) - (cliche?1:0);
+  if(empty) score = 0;
+  score = Math.max(0, Math.min(3, score));
+  const checks = [
+    {ok:!empty && publico, t:"Diz quem você atende ou sua especialidade"},
+    {ok:!empty && resolve, t:"Diz o que você resolve para o tutor"},
+    {ok:!empty && agenda, t:"Diz como agendar"},
+    {ok:!empty && local, t:"Diz onde você atende"},
+    {ok:!empty && crmv, t:crmv ? "Tem o seu CRMV" : "Falta o seu CRMV, que é obrigatório na página principal do perfil (Resolução CFMV 1.649/2025)"},
+    {ok:!empty && !cliche, t:cliche ? "Tem clichê de \"amo animais\" (pré-requisito da profissão, não diferencial)" : "Sem clichê de \"amo animais\""}
+  ];
+  if(emojis.length > 6) checks.push({ok:false, t:`${emojis.length} emojis. A bio ficou poluída e o essencial se perde`});
+  return {score, checks, empty};
+}
+const BIO_ITEM = {area:"Bio",
+  achado:"Sua bio não responde em 3 segundos as perguntas de quem acabou de chegar: para quem você atende, o que resolve e como agendar.",
+  rx:"Bio = para quem + o que resolve + como agendar + cidade + CRMV (obrigatório).",
+  ex:["Médica veterinária 🐾 | Apaixonada por animais 💙","Vet de gatos em BH · CRMV-MG 00000 | Consulta sem estresse | Agende pelo link ↓"]};
+
+/* ===== ESTADO ===== */
+const S = {step:"intro", nome:"", handle:"", bio:"", i:0, a:Array(Q.length).fill(null), open:["","","",""],
+  laudo:String(Math.floor(1000+Math.random()*9000))};
+const OPEN = [
+  "Qual é o seu maior surto com o Instagram hoje?",
+  "Qual serviço você mais quer vender pelo perfil?",
+  "Se o seu perfil funcionasse amanhã, o que mudaria na sua agenda?",
+  "Você faz post com IA? Legenda, design, imagem... conta como usa."
+];
+const TOTAL_STEPS = Q.length + 2; // bio + perguntas + abertas
+const app = document.getElementById("app");
+const esc = s => String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const header = right => `<div class="top"><div class="logo">surta<span>vet</span><small>marketing veterinário</small></div><span class="chip">${right}</span></div>`;
+const progress = (n,label) => `<div class="progress"><div class="prow"><span>Etapa ${String(n).padStart(2,"0")} de ${TOTAL_STEPS}</span><span>${esc(label)}</span></div><div class="bar"><i style="width:${((n-1)/TOTAL_STEPS)*100}%"></i></div></div>`;
+const go = step => { S.step = step; render(); window.scrollTo({top:0}); };
+
+function render(){
+  ({intro:renderIntro, bio:renderBio, quiz:renderQ, open:renderOpen, result:renderResult})[S.step]();
+}
+
+function renderIntro(){
+  app.innerHTML = `
+    ${header("Raio-X do Surtado")}
+    <h1>Será que você é uma vet <span class="s">surtada</span>?</h1>
+    <p class="lede">O Raio-X que analisa o seu Instagram (<b>bio, foto, nome, link, destaques, fixados, feed e stories</b>) e mede o seu nível de surto com o perfil. Leva 3 minutos.</p>
+    <div class="legend" aria-label="Níveis do surtômetro">
+      <div class="lv0">Zero<i>surto</i></div><div class="lv1">Leve</div><div class="lv2">Moderado</div><div class="lv3">Agudo</div><div class="lv4">Crônico</div>
+    </div>
+    <form class="intro-form" id="f" novalidate>
+      <div class="field">
+      <label for="nome">Qual é o seu nome?</label>
+      <div class="at"><input id="nome" autocomplete="given-name" placeholder="Ex.: Ana Souza" value="${esc(S.nome)}"></div>
+      </div>
+      <div class="field">
+      <label for="handle">E o seu Instagram profissional?</label>
+      <div class="at"><span>@</span><input id="handle" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="seuperfil.vet" value="${esc(S.handle)}"></div>
+      </div>
+      <p class="hint">Abre o seu perfil numa outra aba para responder olhando. Vale o perfil como ele está hoje, não como você queria que estivesse.</p>
+      <p class="err" id="err" hidden></p>
+      <button class="btn" type="submit">Começar meu raio-x</button>
+    </form>
+    <p class="fine">Spoiler: quase todo perfil vet tem algum grau de surto.</p>`;
+  const inp = document.getElementById("handle"), nm = document.getElementById("nome"), err = document.getElementById("err");
+  document.getElementById("f").addEventListener("submit", e=>{
+    e.preventDefault();
+    const n = nm.value.trim().replace(/\s+/g," ");
+    if(n.length < 2){ err.textContent="Escreve o seu nome para o laudo sair no seu nome."; err.hidden=false; nm.focus(); return; }
+    const h = inp.value.trim().replace(/^@+/,"").toLowerCase();
+    if(!/^[a-z0-9._]{2,30}$/.test(h)){ err.textContent="Digite um @ válido do Instagram: letras, números, ponto ou _."; err.hidden=false; inp.focus(); return; }
+    S.nome = n; S.handle = h; go("bio");
+  });
+}
+
+function renderBio(){
+  app.innerHTML = `
+    ${header("@"+esc(S.handle))}
+    ${progress(1,"Bio")}
+    <h2 class="q">Cola aqui a sua bio, do jeitinho que está.</h2>
+    <p class="qsub">Com emoji, quebra de linha e tudo. O raio-x lê o texto e mostra o que falta.</p>
+    <form class="field" id="f" novalidate>
+      <label for="bio" class="hint">Sua bio</label>
+      <textarea id="bio" maxlength="300" placeholder="Ex.: Médica veterinária 🐾 CRMV-MG 00000 | Apaixonada por animais 💙">${esc(S.bio)}</textarea>
+      <button class="btn" type="submit">Analisar e seguir</button>
+    </form>
+    <div class="nav"><button class="ghost" type="button" id="back">← Voltar</button></div>`;
+  const ta = document.getElementById("bio"); ta.focus({preventScroll:true});
+  document.getElementById("f").addEventListener("submit", e=>{ e.preventDefault(); S.bio = ta.value.trim(); S.i = 0; go("quiz"); });
+  document.getElementById("back").addEventListener("click", ()=>{ S.bio = ta.value; go("intro"); });
+}
+
+function renderQ(){
+  const q = Q[S.i];
+  app.innerHTML = `
+    ${header("@"+esc(S.handle))}
+    ${progress(S.i+2, q.area)}
+    <h2 class="q" id="qt">${esc(q.q)}</h2>
+    <div class="opts" role="group" aria-labelledby="qt">
+      ${q.o.map((o,k)=>`<button class="opt" type="button" data-k="${k}" aria-pressed="${S.a[S.i]===k}"><span class="k">${"ABCD"[k]}</span><span>${esc(o[0])}</span></button>`).join("")}
+    </div>
+    <div class="nav"><button class="ghost" type="button" id="back">← Voltar</button></div>`;
+  app.querySelectorAll(".opt").forEach(b=>b.addEventListener("click",()=>{
+    S.a[S.i] = +b.dataset.k;
+    app.querySelectorAll(".opt").forEach(x=>x.setAttribute("aria-pressed", x===b));
+    setTimeout(()=>{ if(S.i < Q.length-1){ S.i++; go("quiz"); } else go("open"); }, 220);
+  }));
+  document.getElementById("back").addEventListener("click",()=>{ if(S.i>0){S.i--; go("quiz");} else go("bio"); });
+  const f = app.querySelector('.opt[aria-pressed="true"]') || app.querySelector(".opt"); f && f.focus({preventScroll:true});
+}
+
+function renderOpen(){
+  app.innerHTML = `
+    ${header("@"+esc(S.handle))}
+    ${progress(TOTAL_STEPS,"Na lata")}
+    <h2 class="q">Agora, na lata. Quatro respostas rápidas.</h2>
+    <p class="qsub">As quatro são obrigatórias. Elas entram no seu laudo e me ajudam a entender o seu caso.</p>
+    <form class="open-q" id="f" novalidate>
+      ${OPEN.map((t,k)=>`<div class="field"><label for="o${k}">${esc(t)}</label><textarea id="o${k}" maxlength="280" required aria-describedby="e${k}" placeholder="${["Ex.: posto todo dia e ninguém agenda","Ex.: atendimento domiciliar para gatos","Ex.: pararia de depender de indicação","Ex.: faço as artes com IA e a legenda no ChatGPT"][k]}">${esc(S.open[k])}</textarea><p class="err" id="e${k}" hidden>Responde essa aqui, nem que seja em poucas palavras.</p></div>`).join("")}
+      <button class="btn" type="submit">Ver meu laudo de surto</button>
+    </form>
+    <div class="nav"><button class="ghost" type="button" id="back">← Voltar</button></div>`;
+  const read = ()=>{ S.open = OPEN.map((_,k)=>document.getElementById("o"+k).value.trim()); };
+  document.getElementById("f").addEventListener("submit", e=>{
+    e.preventDefault(); read();
+    let first = null;
+    S.open.forEach((v,k)=>{ const bad = v.length < 3; const el = document.getElementById("e"+k); el.hidden = !bad;
+      document.getElementById("o"+k).setAttribute("aria-invalid", bad); if(bad && first===null) first = k; });
+    if(first!==null){ const t = document.getElementById("o"+first); t.focus(); t.scrollIntoView({block:"center"}); return; }
+    go("result");
+  });
+  document.getElementById("back").addEventListener("click", ()=>{ read(); S.i = Q.length-1; go("quiz"); });
+}
+
+function renderResult(){
+  const bio = analyzeBio(S.bio);
+  const pts = Q.map((q,i)=>q.o[S.a[i]][1]);
+  const items = [{...BIO_ITEM, p:bio.score, i:-1}, ...Q.map((q,i)=>({...q, p:pts[i], i}))];
+  const total = items.reduce((s,x)=>s+x.p,0), max = items.length*3;
+  const surto = Math.round((1 - total/max)*100);
+  const L = LEVELS.find(l=>surto<=l.max);
+  const worst = [...items].sort((a,b)=>a.p-b.p||a.i-b.i).slice(0,3);
+  const worstIdx = new Set(worst.map(w=>w.i));
+  const today = new Date().toLocaleDateString("pt-BR");
+
+  const dor = S.open[0], quer = S.open[1], sonho = S.open[2], ia = S.open[3];
+  const msg = [
+    `Oi, Júlia! Aqui é a ${S.nome} (@${S.handle}). Fiz o Raio-X do Surtado e deu ${L.name} (${surto}% surtada).`,
+    dor && `Meu maior surto: ${dor}`,
+    quer && `Quero vender: ${quer}`,
+    sonho && `Se funcionasse: ${sonho}`,
+    ia && `Sobre IA: ${ia}`,
+    `Quero saber da Consultoria Anti-Surto!`
+  ].filter(Boolean).join("\n");
+  const wa = `https://wa.me/${WHATS}?text=${encodeURIComponent(msg)}`;
+  const shareText = `Fiz o Raio-X do Surtado da @${INSTA} e meu perfil está ${surto}% surtado (${L.name}). E o seu?`;
+  const fillText = L.cls==="lv4" ? "var(--off)" : "var(--ink)";
+
+  app.innerHTML = `
+    ${header("Laudo emitido")}
+    <article class="laudo" aria-label="Laudo de surto">
+      <div class="lhead"><span>Laudo de surto nº <b>${S.laudo}</b></span><span>${today}</span></div>
+      <div class="hero">
+        <div class="level"><span class="who">Paciente: <b>${esc(S.nome)}</b> · @${esc(S.handle)}</span><span class="tier">Surtômetro do perfil</span></div>
+        <div class="capsule" role="img" aria-label="Surtômetro: ${surto}% de surto">
+          <div class="fill" id="fill" style="width:0%;background:${L.color}"></div>
+          <div class="val"><span class="pct" style="color:${fillText}">${surto}%</span></div>
+        </div>
+        <div class="scale" aria-hidden="true"><span>zero surto</span><span>surto crônico</span></div>
+        <div class="level"><span class="pill ${L.cls}">${L.name}</span><span class="tier">Tier ${L.tier}</span></div>
+        <h2>${esc(L.title)}</h2>
+        <p>${esc(L.text)}</p>
+      </div>
+
+      <div class="sect">
+        <span class="eyebrow">Escala de surto</span>
+        <ul class="scale-list">
+          ${LEVELS.map(l=>`<li class="${l===L?"me":""}"><span class="dot ${l.cls}" aria-hidden="true"></span><span><b>${esc(l.name)}${l===L?" (você)":""}</b><span>${esc(l.ex)}</span></span></li>`).join("")}
+        </ul>
+      </div>
+
+      <div class="sect">
+        <span class="eyebrow">Raio-X da bio</span>
+        ${bio.empty ? `<p>Você não colou a bio, então ela entrou com nota zero. Se ela fosse boa, você teria colado. 😉</p>`
+          : `<div class="biobox">${esc(S.bio)}</div>`}
+        <ul class="checks">
+          ${bio.checks.map(c=>`<li class="${c.ok?"ok":"no"}"><span class="ic" aria-hidden="true">${c.ok?"✓":"✕"}</span><span><span class="sr">${c.ok?"Ok: ":"Falta: "}</span>${esc(c.t)}</span></li>`).join("")}
+        </ul>
+      </div>
+
+      <div class="sect">
+        <span class="eyebrow">Achados por região</span>
+        <div class="meters">
+          ${items.map(x=>{const bad = worstIdx.has(x.i);
+            return `<span class="${bad?"bad":""}">${esc(x.area)}</span><span class="m ${bad?"bad":""}" aria-label="${x.p} de 3">${[0,1,2].map(k=>`<i class="${k<x.p?"on":""}"></i>`).join("")}</span>`}).join("")}
+        </div>
+      </div>
+
+      <div class="sect">
+        <span class="eyebrow">Os 3 focos de surto</span>
+        <ul class="finds">
+          ${worst.map(w=>`<li><h3>${esc(w.area)}</h3><p>${esc(w.achado)}</p><p class="rx"><b>Prescrição anti-surto:</b> ${esc(w.rx)}</p>${w.ex?`<div class="ex"><p><span class="tag bad">Surtado</span>${esc(w.ex[0])}</p><p><span class="tag good">Anti-surto</span>${esc(w.ex[1])}</p></div>`:""}</li>`).join("")}
+        </ul>
+      </div>
+    </article>
+
+    <section class="offer" aria-labelledby="oh">
+      <span class="eyebrow">Tratamento indicado</span>
+      <h2 id="oh">Consultoria <span>Anti-Surto</span></h2>
+      <p class="pain">${esc(L.pain)}</p>
+      ${dor ? `<p class="quote">Você mesma disse: <b>"${esc(dor)}"</b>. Isso não se resolve postando mais. Se resolve com direção.</p>`
+            : `<p class="quote">E não, isso não se resolve postando mais. <b>Se resolve com direção.</b></p>`}
+      <p class="incl">O que você recebe na Anti-Surto</p>
+      <ul>
+        <li><span><b>1h30 de consultoria comigo</b>, em cima do seu perfil, não de um perfil genérico</span></li>
+        <li><span><b>Estratégia, posicionamento e direção:</b> o que postar, para quem e para vender o quê${quer ? ` (começando por ${esc(quer.replace(/[.!]+$/,""))})` : ""}</span></li>
+        <li><span><b>PDF da consultoria feito para você</b>, sem script genérico, com o plano do seu perfil</span></li>
+        <li><span><b>Transcrição da aula:</b> tudo o que a gente conversou por escrito, para você não depender da memória</span></li>
+        <li><span><b>1 mês de acompanhamento no Trello</b>: tarefas, prazos e eu acompanhando de perto para você não surtar de novo sozinha</span></li>
+      </ul>
+      <div class="price"><span class="price-l">Consultoria Anti-Surto por apenas</span><span class="price-v">R$&nbsp;697,00</span></div>
+      <a class="btn" href="${wa}" target="_blank" rel="noopener">Quero tratar meu surto</a>
+      <p class="fine">Abre o meu WhatsApp com o seu laudo já na mensagem. Se não abrir, chama no <b>${WHATS_SHOW}</b>.</p>
+    </section>
+
+    <div class="row">
+      <button class="ghost" type="button" id="copy">Copiar texto para o story</button>
+      <button class="ghost" type="button" id="redo">Refazer o raio-x</button>
+    </div>
+    <p class="toast" id="toast"></p>
+    <p class="fine">Tira print do laudo, posta no story e marca a @${INSTA}.</p>`;
+
+  const fill = document.getElementById("fill");
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{ fill.style.width = Math.max(surto,4)+"%"; }));
+
+  const toast = document.getElementById("toast");
+  document.getElementById("copy").addEventListener("click",()=>{
+    const ok = ()=>{ toast.textContent = "Copiado. Cola no story junto com o print do laudo."; };
+    const fail = ()=>{ toast.textContent = shareText; };
+    try{ navigator.clipboard.writeText(shareText).then(ok,fail); }catch(e){ fail(); }
+  });
+  document.getElementById("redo").addEventListener("click",()=>{
+    Object.assign(S,{bio:"", i:0, a:Array(Q.length).fill(null), open:["","","",""]}); go("intro");
+  });
+}
+
+render();
+</script>
+<style>.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}</style>
+
+</body>
+</html>
